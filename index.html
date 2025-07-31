@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico Gastronômico - Redução de Custos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin: 20px 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 3px;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #ff6b6b;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .checkbox-item:hover {
+            background: #e9ecef;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .radio-item:hover {
+            background: #e9ecef;
+        }
+
+        .radio-item input[type="radio"] {
+            width: auto;
+            margin-right: 8px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            max-width: 150px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10ac84, #00d2d3);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 172, 132, 0.3);
+        }
+
+        .results {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .metric-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .metric-value {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .metric-good { color: #10ac84; }
+        .metric-warning { color: #f39c12; }
+        .metric-danger { color: #e74c3c; }
+
+        .recommendations {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .recommendation {
+            padding: 15px;
+            border-left: 4px solid #667eea;
+            background: #f8f9ff;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .recommendation h4 {
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .recommendation p {
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            font-weight: bold;
+            color: #999;
+            transition: all 0.3s ease;
+        }
+
+        .step.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .step.completed {
+            background: #10ac84;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .radio-group {
+                flex-direction: column;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍽️ Diagnóstico Gastronômico</h1>
+            <p>Análise Gratuita de Redução de Custos - 5 minutos</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+
+        <div class="form-container">
+            <div class="step-indicator">
+                <div class="step active" id="step1">1</div>
+                <div class="step" id="step2">2</div>
+                <div class="step" id="step3">3</div>
+                <div class="step" id="step4">4</div>
+                <div class="step" id="step5">5</div>
+            </div>
+
+            <form id="diagnosticForm">
+                <!-- Seção 1: Dados Básicos -->
+                <div class="section active" id="section1">
+                    <h2>📊 Dados do Seu Negócio</h2>
+                    
+                    <div class="form-group">
+                        <label for="nomeEmpresa">Nome da Empresa *</label>
+                        <input type="text" id="nomeEmpresa" name="nomeEmpresa" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tipoEstabelecimento">Tipo de Estabelecimento *</label>
+                        <select id="tipoEstabelecimento" name="tipoEstabelecimento" required>
+                            <option value="">Selecione...</option>
+                            <option value="restaurante">Restaurante</option>
+                            <option value="lanchonete">Lanchonete</option>
+                            <option value="padaria">Padaria</option>
+                            <option value="pizzaria">Pizzaria</option>
+                            <option value="hotel">Hotel/Pousada</option>
+                            <option value="delivery">Delivery</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="faturamentoMensal">Faturamento Mensal Médio *</label>
+                        <select id="faturamentoMensal" name="faturamentoMensal" required>
+                            <option value="">Selecione...</option>
+                            <option value="ate-10k">Até R$ 10.000</option>
+                            <option value="10k-25k">R$ 10.001 a R$ 25.000</option>
+                            <option value="25k-50k">R$ 25.001 a R$ 50.000</option>
+                            <option value="50k-100k">R$ 50.001 a R$ 100.000</option>
+                            <option value="acima-100k">Acima de R$ 100.000</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="numFuncionarios">Número de Funcionários</label>
+                        <select id="numFuncionarios" name="numFuncionarios">
+                            <option value="">Selecione...</option>
+                            <option value="1-2">1 a 2</option>
+                            <option value="3-5">3 a 5</option>
+                            <option value="6-10">6 a 10</option>
+                            <option value="11-20">11 a 20</option>
+                            <option value="acima-20">Acima de 20</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Seção 2: Custos -->
+                <div class="section" id="section2">
+                    <h2>💰 Estrutura de Custos</h2>
+                    
+                    <div class="form-group">
+                        <label for="custoProdutos">Quanto você gasta mensalmente com ingredientes/produtos? *</label>
+                        <select id="custoProdutos" name="custoProdutos" required>
+                            <option value="">Selecione...</option>
+                            <option value="20">Menos de 20% do faturamento</option>
+                            <option value="30">20% a 30% do faturamento</option>
+                            <option value="40">30% a 40% do faturamento</option>
+                            <option value="50">40% a 50% do faturamento</option>
+                            <option value="60">Acima de 50% do faturamento</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="custoPessoal">Gasto com folha de pagamento (% do faturamento) *</label>
+                        <select id="custoPessoal" name="custoPessoal" required>
+                            <option value="">Selecione...</option>
+                            <option value="20">Menos de 20%</option>
+                            <option value="30">20% a 30%</option>
+                            <option value="40">30% a 40%</option>
+                            <option value="50">40% a 50%</option>
+                            <option value="60">Acima de 50%</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="perdaMensal">Qual sua perda mensal estimada por vencimento/desperdício? *</label>
+                        <select id="perdaMensal" name="perdaMensal" required>
+                            <option value="">Selecione...</option>
+                            <option value="2">Menos de 2% do faturamento</option>
+                            <option value="5">2% a 5% do faturamento</option>
+                            <option value="8">5% a 8% do faturamento</option>
+                            <option value="12">8% a 12% do faturamento</option>
+                            <option value="15">Acima de 12% do faturamento</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Seção 3: Controles -->
+                <div class="section" id="section3">
+                    <h2>📋 Controles e Gestão</h2>
+                    
+                    <div class="form-group">
+                        <label>Quais controles você possui atualmente?</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="controleEstoque" name="controles" value="estoque">
+                                <label for="controleEstoque">Controle de estoque</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="fichaTecnica" name="controles" value="ficha">
+                                <label for="fichaTecnica">Ficha técnica dos pratos</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="controleValidade" name="controles" value="validade">
+                                <label for="controleValidade">Controle de validade</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="controleMargem" name="controles" value="margem">
+                                <label for="controleMargem">Cálculo de margem por prato</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="controleVendas" name="controles" value="vendas">
+                                <label for="controleVendas">Análise de vendas por item</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="nenhum" name="controles" value="nenhum">
+                                <label for="nenhum">Nenhum controle formal</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sistemaGestao">Que sistema você usa para gestão? *</label>
+                        <select id="sistemaGestao" name="sistemaGestao" required>
+                            <option value="">Selecione...</option>
+                            <option value="planilhas">Planilhas Excel</option>
+                            <option value="pdv-simples">PDV simples</option>
+                            <option value="erp-completo">Sistema ERP completo</option>
+                            <option value="caderninho">Caderninho/Papel</option>
+                            <option value="nenhum">Nenhum sistema</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Seção 4: Fornecedores -->
+                <div class="section" id="section4">
+                    <h2>🚚 Fornecedores e Compras</h2>
+                    
+                    <div class="form-group">
+                        <label for="numFornecedores">Quantos fornecedores principais você tem? *</label>
+                        <select id="numFornecedores" name="numFornecedores" required>
+                            <option value="">Selecione...</option>
+                            <option value="1-2">1 a 2 fornecedores</option>
+                            <option value="3-5">3 a 5 fornecedores</option>
+                            <option value="6-10">6 a 10 fornecedores</option>
+                            <option value="acima-10">Acima de 10 fornecedores</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ultimaRenegociacao">Quando foi sua última renegociação de preços? *</label>
+                        <select id="ultimaRenegociacao" name="ultimaRenegociacao" required>
+                            <option value="">Selecione...</option>
+                            <option value="1mes">Último mês</option>
+                            <option value="3meses">Últimos 3 meses</option>
+                            <option value="6meses">Últimos 6 meses</option>
+                            <option value="1ano">Há mais de 1 ano</option>
+                            <option value="nunca">Nunca renegociei</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Como você faz suas compras?</label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="compra1" name="processoCompra" value="cotacao">
+                                <label for="compra1">Faço cotação regular</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="compra2" name="processoCompra" value="fornecedor-fixo">
+                                <label for="compra2">Sempre mesmo fornecedor</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="compra3" name="processoCompra" value="oportunidade">
+                                <label for="compra3">Por oportunidade</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção 5: Objetivos -->
+                <div class="section" id="section5">
+                    <h2>🎯 Objetivos e Desafios</h2>
+                    
+                    <div class="form-group">
+                        <label for="principalDesafio">Qual seu principal desafio hoje? *</label>
+                        <select id="principalDesafio" name="principalDesafio" required>
+                            <option value="">Selecione...</option>
+                            <option value="custos-altos">Custos muito altos</option>
+                            <option value="desperdicio">Muito desperdício</option>
+                            <option value="margem-baixa">Margem de lucro baixa</option>
+                            <option value="falta-controle">Falta de controle</option>
+                            <option value="competitividade">Falta de competitividade</option>
+                            <option value="crescimento">Dificuldade para crescer</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="objetivoPrincipal">Qual seu objetivo principal? *</label>
+                        <select id="objetivoPrincipal" name="objetivoPrincipal" required>
+                            <option value="">Selecione...</option>
+                            <option value="reduzir-custos">Reduzir custos operacionais</option>
+                            <option value="aumentar-margem">Aumentar margem de lucro</option>
+                            <option value="organizar-gestao">Organizar a gestão</option>
+                            <option value="expandir-negocio">Expandir o negócio</option>
+                            <option value="profissionalizar">Profissionalizar operação</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contato">Seu WhatsApp para receber o resultado *</label>
+                        <input type="tel" id="contato" name="contato" placeholder="(00) 00000-0000" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Seu email *</label>
+                        <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+                    </div>
+                </div>
+
+                <!-- Resultados -->
+                <div class="section" id="results" style="display: none;">
+                    <h2>📊 Seu Diagnóstico</h2>
+                    <div id="diagnosticResults"></div>
+                </div>
+
+                <div class="buttons">
+                    <button type="button" class="btn btn-secondary" id="prevBtn" onclick="previousSection()" style="display: none;">Anterior</button>
+                    <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextSection()">Próximo</button>
+                    <button type="button" class="btn btn-success" id="submitBtn" onclick="generateResults()" style="display: none;">Ver Diagnóstico</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentSection = 1;
+        const totalSections = 5;
+
+        function updateProgress() {
+            const progress = (currentSection / totalSections) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            // Atualizar indicadores de etapa
+            for (let i = 1; i <= totalSections; i++) {
+                const step = document.getElementById('step' + i);
+                if (i < currentSection) {
+                    step.className = 'step completed';
+                } else if (i === currentSection) {
+                    step.className = 'step active';
+                } else {
+                    step.className = 'step';
+                }
+            }
+        }
+
+        function showSection(sectionNumber) {
+            // Esconder todas as seções
+            for (let i = 1; i <= totalSections; i++) {
+                document.getElementById('section' + i).classList.remove('active');
+            }
+            
+            // Mostrar seção atual
+            document.getElementById('section' + sectionNumber).classList.add('active');
+            
+            // Atualizar botões
+            document.getElementById('prevBtn').style.display = sectionNumber > 1 ? 'block' : 'none';
+            document.getElementById('nextBtn').style.display = sectionNumber < totalSections ? 'block' : 'none';
+            document.getElementById('submitBtn').style.display = sectionNumber === totalSections ? 'block' : 'none';
+        }
+
+        function nextSection() {
+            if (validateCurrentSection()) {
+                if (currentSection < totalSections) {
+                    currentSection++;
+                    showSection(currentSection);
+                    updateProgress();
+                }
+            }
+        }
+
+        function previousSection() {
+            if (currentSection > 1) {
+                currentSection--;
+                showSection(currentSection);
+                updateProgress();
+            }
+        }
+
+        function validateCurrentSection() {
+            const currentSectionElement = document.getElementById('section' + currentSection);
+            const requiredFields = currentSectionElement.querySelectorAll('[required]');
+            
+            for (let field of requiredFields) {
+                if (!field.value.trim()) {
+                    field.focus();
+                    alert('Por favor, preencha todos os campos obrigatórios.');
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function generateResults() {
+            if (!validateCurrentSection()) return;
+            
+            // Coletar dados do formulário
+            const formData = new FormData(document.getElementById('diagnosticForm'));
+            const data = Object.fromEntries(formData.entries());
+            
+            // Calcular métricas
+            const custoTotal = parseInt(data.custoProdutos) + parseInt(data.custoPessoal);
+            const perdas = parseInt(data.perdaMensal);
+            
+            // Determinar situação
+            let situacaoGeral = 'danger';
+            if (custoTotal <= 60 && perdas <= 5) situacaoGeral = 'good';
+            else if (custoTotal <= 70 && perdas <= 8) situacaoGeral = 'warning';
+            
+            // Calcular economia potencial
+            let economiaPotencial = 0;
+            if (data.ultimaRenegociacao === 'nunca' || data.ultimaRenegociacao === '1ano') {
+                economiaPotencial += 5; // 5% economia em renegociação
+            }
+            if (perdas > 5) {
+                economiaPotencial += perdas - 3; // Reduzir perdas para 3%
+            }
+            if (!data.controles || data.controles === 'nenhum') {
+                economiaPotencial += 3; // 3% com controles básicos
+            }
+            
+            // Gerar recomendações
+            const recomendacoes = [];
+            
+            if (data.ultimaRenegociacao === 'nunca' || data.ultimaRenegociacao === '1ano') {
+                recomendacoes.push({
+                    titulo: 'Renegociação Urgente com Fornecedores',
+                    descricao: 'Você pode economizar até 5% apenas renegociando preços com seus fornecedores principais.'
+                });
+            }
+            
+            if (perdas > 5) {
+                recomendacoes.push({
+                    titulo: 'Controle de Desperdícios',
+                    descricao: 'Suas perdas estão altas. Com controle adequado, você pode reduzir para 2-3% do faturamento.'
+                });
+            }
+            
+            if (!formData.getAll('controles').includes('estoque')) {
+                recomendacoes.push({
+                    titulo: 'Implementar Controle de Estoque',
+                    descricao: 'Um controle básico de estoque pode reduzir custos em até 3% do faturamento.'
+                });
+            }
+            
+            if (!formData.getAll('controles').includes('ficha')) {
+                recomendacoes.push({
+                    titulo: 'Fichas Técnicas dos Pratos',
+                    descricao: 'Padronizar receitas ajuda a controlar custos e manter qualidade consistente.'
+                });
+            }
+            
+            // Mostrar resultados
+            const resultsHTML = `
+                <div class="results">
+                    <h3>📊 Situação Atual</h3>
+                    <div class="metric">
+                        <span class="metric-label">Custo Total Operacional</span>
+                        <span class="metric-value metric-${situacaoGeral}">${custoTotal}% do faturamento</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Perdas por Desperdício</span>
+                        <span class="metric-value metric-${perdas <= 5 ? 'good' : 'danger'}">${perdas}% do faturamento</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Economia Potencial Identificada</span>
+                        <span class="metric-value metric-good">${economiaPotencial}% do faturamento</span>
+                    </div>
+                </div>
+                
+                <div class="recommendations">
+                    <h3>🎯 Recomendações Prioritárias</h3>
+                    ${recomendacoes.map(rec => `
+                        <div class="recommendation">
+                            <h4>${rec.titulo}</h4>
+                            <p>${rec.descricao}</p>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 12px; color: white;">
+                    <h3>🚀 Próximo Passo</h3>
+                    <p style="font-size: 1.1em; margin: 15px 0;">
+                        Baseado no seu diagnóstico, identificamos <strong>${economiaPotencial}% de economia potencial</strong> no seu negócio.
+                    </p>
+                    <p style="margin: 15px 0;">
+                        Nossa consultoria especializada pode ajudar você a implementar essas melhorias de forma segura e eficiente.
+                    </p>
+                    <p style="font-size: 0.9em; opacity: 0.9;">
+                        ✅ Diagnóstico completo enviado para ${data.email}<br>
+                        ✅ Nossa equipe entrará em contato via WhatsApp<br>
+                        ✅ Consultoria inicial gratuita disponível
+                    </p>
+                </div>
+            `;
+            
+            // Esconder formulário e mostrar resultados
+            document.getElementById('results').innerHTML = resultsHTML;
+            document.getElementById('results').style.display = 'block';
+            
+            // Esconder seção atual
+            document.getElementById('section' + currentSection).classList.remove('active');
+            
+            // Esconder botões
+            document.getElementById('prevBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('submitBtn').style.display = 'none';
+            
+            // Atualizar progresso para 100%
+            document.getElementById('progressBar').style.width = '100%';
+            
+            // Simular envio dos dados (aqui você integraria com seu sistema)
+            console.log('Dados do diagnóstico:', data);
+            
+            // Salvar dados localmente para demonstração
+            const diagnosticData = {
+                ...data,
+                timestamp: new Date().toISOString(),
+                economiaPotencial: economiaPotencial,
+                situacaoGeral: situacaoGeral,
+                recomendacoes: recomendacoes
+            };
+            
+            // Em um sistema real, você enviaria estes dados para seu servidor
+            localStorage.setItem('ultimoDiagnostico', JSON.stringify(diagnosticData));
+        }
+
+        // Máscara para telefone
+        document.getElementById('contato').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+            value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+            e.target.value = value;
+        });
+
+        // Validação de email em tempo real
+        document.getElementById('email').addEventListener('blur', function(e) {
+            const email = e.target.value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email && !emailRegex.test(email)) {
+                alert('Por favor, digite um email válido.');
+                e.target.focus();
+            }
+        });
+
+        // Checkbox "Nenhum" desabilita outros checkboxes
+        document.getElementById('nenhum').addEventListener('change', function(e) {
+            const checkboxes = document.querySelectorAll('input[name="controles"]:not(#nenhum)');
+            checkboxes.forEach(cb => {
+                cb.disabled = e.target.checked;
+                if (e.target.checked) cb.checked = false;
+            });
+        });
+
+        // Outros checkboxes desabilitam "Nenhum"
+        document.querySelectorAll('input[name="controles"]:not(#nenhum)').forEach(cb => {
+            cb.addEventListener('change', function() {
+                const nenhum = document.getElementById('nenhum');
+                if (this.checked) {
+                    nenhum.checked = false;
+                }
+            });
+        });
+
+        // Navegação por teclado
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                if (currentSection < totalSections) {
+                    nextSection();
+                } else if (currentSection === totalSections) {
+                    generateResults();
+                }
+            }
+        });
+
+        // Scroll suave para o topo ao trocar de seção
+        function smoothScrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Override das funções para incluir scroll
+        const originalNextSection = nextSection;
+        nextSection = function() {
+            originalNextSection();
+            smoothScrollToTop();
+        };
+
+        const originalPreviousSection = previousSection;
+        previousSection = function() {
+            originalPreviousSection();
+            smoothScrollToTop();
+        };
+
+        // Salvar progresso automaticamente
+        function saveProgress() {
+            const formData = new FormData(document.getElementById('diagnosticForm'));
+            const data = Object.fromEntries(formData.entries());
+            data.currentSection = currentSection;
+            localStorage.setItem('diagnosticoProgresso', JSON.stringify(data));
+        }
+
+        // Carregar progresso salvo
+        function loadProgress() {
+            const saved = localStorage.getItem('diagnosticoProgresso');
+            if (saved) {
+                const data = JSON.parse(saved);
+                
+                // Perguntar se deseja continuar
+                if (confirm('Encontramos um diagnóstico em andamento. Deseja continuar de onde parou?')) {
+                    // Restaurar valores do formulário
+                    Object.keys(data).forEach(key => {
+                        if (key !== 'currentSection') {
+                            const field = document.getElementById(key) || document.querySelector(`[name="${key}"]`);
+                            if (field) {
+                                if (field.type === 'checkbox' || field.type === 'radio') {
+                                    field.checked = field.value === data[key];
+                                } else {
+                                    field.value = data[key];
+                                }
+                            }
+                        }
+                    });
+                    
+                    // Restaurar seção atual
+                    currentSection = data.currentSection || 1;
+                    showSection(currentSection);
+                    updateProgress();
+                }
+            }
+        }
+
+        // Auto-save a cada mudança
+        document.getElementById('diagnosticForm').addEventListener('change', saveProgress);
+
+        // Carregar progresso ao inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProgress();
+            updateProgress();
+        });
+
+        // Limpar progresso salvo após completar
+        const originalGenerateResults = generateResults;
+        generateResults = function() {
+            originalGenerateResults();
+            localStorage.removeItem('diagnosticoProgresso');
+        };
+
+        // Inicialização
+        updateProgress();
+    </script>
+</body>
+</html>
